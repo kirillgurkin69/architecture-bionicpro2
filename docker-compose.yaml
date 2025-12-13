@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   keycloak_db:
     image: postgres:14
@@ -90,5 +88,28 @@ services:
       MINIO_ROOT_USER: minio_user
       MINIO_ROOT_PASSWORD: minio_password
     command: server --console-address ":9001" /data
+  airflow:
+    image: apache/airflow:2.8.1
+    depends_on:
+      - crm_db
+      - olap_db
+    environment:
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__FERNET_KEY: gkJWY0wuyY69o5xpmTk4Wc5Qo0mRQ0ZX5GDkzJHVGuM=
+      AIRFLOW__WEBSERVER__RBAC: "True"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/requirements.txt:/requirements.txt
+    ports:
+      - "8088:8080"
+    command: >
+      bash -c "pip install -r /requirements.txt && \
+               airflow db init && \
+               airflow users create --username admin --password admin --firstname Air --lastname Flow --role Admin --email admin@example.com --skip-if-exists && \
+               airflow scheduler & airflow webserver"
 volumes:
   minio_storage: {}
