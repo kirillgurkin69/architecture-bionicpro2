@@ -18,8 +18,8 @@ CRM_CONNECTION = {
 CLICKHOUSE_CONNECTION = {
     "host": "olap_db",
     "port": 9000,
-    "user": "default",
-    "password": "",
+    "user": "demo",
+    "password": "demo",
     "secure": False,
 }
 
