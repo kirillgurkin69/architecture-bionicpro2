@@ -187,8 +187,11 @@ services:
         condition: service_healthy
       airflow-init-perms:
         condition: service_completed_successfully
-    entrypoint: ["/bin/bash", "-ec"]
-    command: bash /opt/airflow/scripts/airflow-init.sh
+    environment:
+      <<: *airflow-env
+      _AIRFLOW_DB_MIGRATE: "true"
+      _AIRFLOW_WWW_USER_CREATE: "true"
+    command: version
     restart: "no"
 
   airflow-webserver:

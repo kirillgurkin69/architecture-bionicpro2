@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[airflow-init] Running DB migrations"
+echo "[airflow-init] Checking database state"
+if airflow db check; then
+  echo "[airflow-init] Metadata database already initialized"
+else
+  echo "[airflow-init] Initializing metadata database (airflow db init)"
+  airflow db init
+fi
+
+echo "[airflow-init] Running DB migrations to ensure schema is up to date"
 airflow db migrate
-echo "[airflow-init] Database migrating done!"
+echo "[airflow-init] Database migration done!"
 
 # Create the first user account (idempotent).
 USERNAME="${_AIRFLOW_WWW_USER_USERNAME:-admin}"
