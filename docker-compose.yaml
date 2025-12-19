@@ -51,6 +51,7 @@ services:
       KC_DB_URL: jdbc:postgresql://keycloak_db:5432/keycloak_db
       KC_DB_USERNAME: keycloak_user
       KC_DB_PASSWORD: keycloak_password
+      KC_HEALTH_ENABLED: "true"
     command: start-dev --http-port=8082 --import-realm
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
@@ -89,8 +90,9 @@ services:
       CLICKHOUSE_PORT: 8123
       CLICKHOUSE_USER: demo
       CLICKHOUSE_PASSWORD: demo
-      CLICKHOUSE_DATABASE: demo
+      CLICKHOUSE_DATABASE: default
       KEYCLOAK_WELL_KNOWN_URL: http://keycloak:8082/realms/reports-realm/.well-known/openid-configuration
+      KEYCLOAK_ISSUER_OVERRIDE: http://localhost:8082/realms/reports-realm
       KEYCLOAK_AUDIENCE: ""
       ALLOWED_ORIGINS: http://localhost:3000
     ports:
@@ -100,6 +102,7 @@ services:
         condition: service_healthy
       olap_db:
         condition: service_healthy
+    restart: unless-stopped
 
   openldap:
     image: osixia/openldap:1.5.0

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class KeycloakAuthenticator:
     """Fetches JWKS from Keycloak and validates bearer tokens."""
 
-    def __init__(self, well_known_url: str, audience: Optional[str] = None) -> None:
+    def __init__(self, well_known_url: str, audience: Optional[str] = None, issuer_override: Optional[str] = None) -> None:
         if not well_known_url:
             raise ValueError("KEYCLOAK_WELL_KNOWN_URL must be configured")
 
@@ -21,6 +21,7 @@ class KeycloakAuthenticator:
         self.jwks_uri: Optional[str] = None
         self.issuer: Optional[str] = None
         self.jwks_keys = []
+        self.issuer_override = issuer_override
         self.refresh_metadata()
 
     def refresh_metadata(self) -> None:
@@ -36,7 +37,7 @@ class KeycloakAuthenticator:
                 self.jwks_keys = jwks_response.json().get("keys", [])
 
                 self.jwks_uri = metadata["jwks_uri"]
-                self.issuer = metadata.get("issuer")
+                self.issuer = self.issuer_override or metadata.get("issuer")
         except Exception as exc:  # pragma: no cover - startup failure path
             logger.exception("Failed to refresh Keycloak metadata")
             raise HTTPException(

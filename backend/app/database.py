@@ -39,7 +39,5 @@ def fetch_emg_report(client: Client) -> Any:
             """
         )
     except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to build report",
-        ) from exc
+        logger.exception("ClickHouse query failed while building report")
+        raise HTTPException(status_code=500, detail="Failed to build report") from exc

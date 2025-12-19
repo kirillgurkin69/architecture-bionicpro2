@@ -33,6 +33,7 @@ keycloak_authenticator = KeycloakAuthenticator(
         "http://keycloak:8082/realms/reports-realm/.well-known/openid-configuration",
     ),
     audience=os.getenv("KEYCLOAK_AUDIENCE"),
+    issuer_override=os.getenv("KEYCLOAK_ISSUER_OVERRIDE"),
 )
 
 
