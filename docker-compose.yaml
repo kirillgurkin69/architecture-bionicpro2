@@ -78,6 +78,28 @@ services:
       REACT_APP_KEYCLOAK_URL: http://localhost:8082
       REACT_APP_KEYCLOAK_REALM: reports-realm
       REACT_APP_KEYCLOAK_CLIENT_ID: reports-frontend
+  
+  backend:
+    container_name: bionicpro-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      CLICKHOUSE_HOST: olap_db
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USER: demo
+      CLICKHOUSE_PASSWORD: demo
+      CLICKHOUSE_DATABASE: demo
+      KEYCLOAK_WELL_KNOWN_URL: http://keycloak:8082/realms/reports-realm/.well-known/openid-configuration
+      KEYCLOAK_AUDIENCE: ""
+      ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      olap_db:
+        condition: service_healthy
 
   openldap:
     image: osixia/openldap:1.5.0
