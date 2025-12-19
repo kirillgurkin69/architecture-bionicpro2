@@ -28,14 +28,19 @@ def fetch_emg_report(client: Client) -> Any:
             """
             SELECT
                 user_id,
-                prosthesis_type,
-                muscle_group,
-                signal_frequency,
-                signal_duration,
-                signal_amplitude,
-                signal_time
-            FROM emg_sensor_data
-            ORDER BY signal_time DESC
+                name,
+                email,
+                country,
+                age,
+                gender,
+                signals_total,
+                prosthesis_types,
+                avg_signal_amplitude,
+                avg_signal_duration,
+                first_signal_time,
+                last_signal_time
+            FROM reporting_customer_telemetry
+            ORDER BY user_id
             """
         )
     except Exception as exc:

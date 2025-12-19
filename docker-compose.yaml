@@ -60,12 +60,18 @@ services:
     depends_on:
       keycloak_db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8082/health/ready || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+  
+  keycloak-ready:
+    image: curlimages/curl:8.10.1
+    container_name: bionicpro-keycloak-ready
+    depends_on:
+      keycloak:
+        condition: service_started
+    command: >
+      sh -c "until curl -fsS http://keycloak:8082/realms/reports-realm/.well-known/openid-configuration > /dev/null;
+             do echo 'waiting for keycloak...'; sleep 2; done"
+    restart: "no"
+
 
   frontend:
     container_name: bionicpro-frontend
@@ -98,8 +104,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      keycloak:
-        condition: service_healthy
+      keycloak-ready:
+        condition: service_completed_successfully
       olap_db:
         condition: service_healthy
     restart: unless-stopped

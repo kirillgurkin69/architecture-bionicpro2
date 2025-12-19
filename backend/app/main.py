@@ -59,7 +59,7 @@ def download_report(_: Dict[str, Any] = Depends(get_current_user)) -> StreamingR
     finally:
         client.close()
 
-    filename = "emg_sensor_report.csv"
+    filename = "reporting_customer_telemetry.csv"
     headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
 
     return StreamingResponse(report_to_csv_stream(result), media_type="text/csv", headers=headers)

@@ -31,7 +31,7 @@ const ReportPage: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'emg_sensor_report.csv';
+      link.download = 'reporting_customer_telemetry.csv';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
